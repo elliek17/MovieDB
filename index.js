@@ -39,8 +39,20 @@ app.get(`/movies/create`, (req, res) => {
     res.json({status:200, message:`create`})
 })
 
-app.get(`/movies/read`, (req, res) => {
-    res.json({status:200, data:movies })
+app.get(`/movies/read/:SORT?`, (req, res) => {
+    const SORT = req.params.SORT;
+    if (!SORT){
+        res.json({status:200, data:movies }) 
+    }
+    if (SORT === `by_date`){
+        res.json({status:200, data:movies.sort((m1, m2) => (m1.year > m2.year)? 1 : (m1.year < m2.year)? -1 : 0) })
+    }
+    if (SORT === `by_rating`){
+        res.json({status:200, data:movies.sort((m1, m2) => (m1.rating < m2.rating)? 1 : (m1.rating > m2.rating)? -1 : 0) })
+    }
+    if (SORT === `by_title`){
+        res.json({status:200, data:movies.sort((m1, m2) => (m1.title > m2.title)? 1 : (m1.title < m2.title)? -1 : 0) })
+    }
 })
 
 app.get(`/movies/update`, (req, res) => {
