@@ -9,7 +9,7 @@ const movies = [
     { title: 'الإرهاب والكباب', year: 1992, rating: 6.2 }
 ]
 
-app.get(`/test`, (req, res) => {
+/*app.get(`/test`, (req, res) => {
   res.json({status:200, message:`ok`})
 })
 
@@ -31,7 +31,7 @@ app.get('/search', (req, res) => {
     else {
         res.status(500).json({status: 500,error: true,message: "you have to provide a search"})
     }
-})
+})*/
 
 /////////////////////////////////////////////////////////////////////
 
@@ -52,6 +52,16 @@ app.get(`/movies/read/:SORT?`, (req, res) => {
     }
     if (SORT === `by_title`){
         res.json({status:200, data:movies.sort((m1, m2) => (m1.title > m2.title)? 1 : (m1.title < m2.title)? -1 : 0) })
+    }
+})
+
+app.get(`/movies/read/id/:ID?`, (req, res) => {
+    const ID = req.params.ID;
+    if (isNaN(parseInt(ID)) || movies[ID] == null) {
+        res.status(404).json({status:404, error:true, message:`the movie ${ID} does not exist`})
+    }
+    else {
+        res.json({status: 200,data:movies[ID]});
     }
 })
 
