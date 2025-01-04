@@ -35,42 +35,52 @@ app.get('/search', (req, res) => {
 
 /////////////////////////////////////////////////////////////////////
 
-app.get(`/movies/create`, (req, res) => {
-    res.json({status:200, message:`create`})
+app.get(`/movies/create/title/:TITLE?/year/:YEAR?/rating/:RATING?`, (req, res) => {
+    const TITLE = req.params.TITLE;
+    const YEAR = req.params.YEAR;
+    const RATING = req.params.RATING || '4';
+    if (TITLE == null || YEAR == null || YEAR.length !== 4 || isNaN(parseInt(YEAR)) ){
+        res.status(403).send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'})
+    }
+    else{
+        const new_movie = {title: `${TITLE}`, year: parseInt(YEAR), rating: parseInt(RATING) }
+        movies.push(new_movie)
+        res.send({status:200, data:movies})
+    }
 })
 
 app.get(`/movies/read/:SORT?`, (req, res) => {
     const SORT = req.params.SORT;
     if (!SORT){
-        res.json({status:200, data:movies }) 
+        res.send({status:200, data:movies }) 
     }
     if (SORT === `by_date`){
-        res.json({status:200, data:movies.sort((m1, m2) => (m1.year > m2.year)? 1 : (m1.year < m2.year)? -1 : 0) })
+        res.send({status:200, data:movies.sort((m1, m2) => (m1.year > m2.year)? 1 : (m1.year < m2.year)? -1 : 0) })
     }
     if (SORT === `by_rating`){
-        res.json({status:200, data:movies.sort((m1, m2) => (m1.rating < m2.rating)? 1 : (m1.rating > m2.rating)? -1 : 0) })
+        res.send({status:200, data:movies.sort((m1, m2) => (m1.rating < m2.rating)? 1 : (m1.rating > m2.rating)? -1 : 0) })
     }
     if (SORT === `by_title`){
-        res.json({status:200, data:movies.sort((m1, m2) => (m1.title > m2.title)? 1 : (m1.title < m2.title)? -1 : 0) })
+        res.send({status:200, data:movies.sort((m1, m2) => (m1.title > m2.title)? 1 : (m1.title < m2.title)? -1 : 0) })
     }
 })
 
 app.get(`/movies/read/id/:ID?`, (req, res) => {
     const ID = req.params.ID;
     if (isNaN(parseInt(ID)) || movies[ID] == null) {
-        res.status(404).json({status:404, error:true, message:`the movie ${ID} does not exist`})
+        res.status(404).send({status:404, error:true, message:`the movie ${ID} does not exist`})
     }
     else {
-        res.json({status: 200,data:movies[ID]});
+        res.send({status: 200,data:movies[ID]});
     }
 })
 
 app.get(`/movies/update`, (req, res) => {
-    res.json({status:200, message:`update`})
+    res.send({status:200, message:`update`})
 })
 
 app.get(`/movies/delete`, (req, res) => {
-    res.json({status:200, message:`delete`})
+    res.send({status:200, message:`delete`})
 })
 
 app.listen(port, (error) => {
