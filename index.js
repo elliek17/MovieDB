@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3200
+const port = 3000
 
 const movies = [
     { title: 'Jaws', year: 1975, rating: 8 },
@@ -23,8 +23,8 @@ app.get(`/hello/:ID?`, (req, res) => {
     res.json({status:200, message:`Hello, ${ID}`})
 })
 
-app.get('/search', (req, res) => {
-    const SEARCH = req.query.s;
+app.get('/search/:SEARCH?', (req, res) => {
+    const SEARCH = req.params.SEARCH;
     if (SEARCH) {
         res.json({status: 200,message: "ok", data: SEARCH})
     }
@@ -79,8 +79,15 @@ app.get(`/movies/update`, (req, res) => {
     res.send({status:200, message:`update`})
 })
 
-app.get(`/movies/delete`, (req, res) => {
-    res.send({status:200, message:`delete`})
+app.get(`/movies/delete/id/:ID?`, (req, res) => {
+    const ID = req.params.ID;
+    if (isNaN(parseInt(ID)) || movies[ID] == null) {
+        res.status(404).send({status:404, error:true, message:`the movie ${ID} does not exist`})
+    }
+    else {
+        movies.splice(ID, 1)
+        res.send({status:200, data:movies }) 
+    }
 })
 
 app.listen(port, (error) => {
